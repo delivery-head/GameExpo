@@ -2,9 +2,18 @@
 
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import { Scan, Zap } from 'lucide-react';
+import { Scan, Zap, Copy, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function QRDisplay({ url }: { url: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
     return (
         <div className="flex flex-col items-center justify-center h-full gap-10">
             <div className="relative group">
@@ -39,7 +48,16 @@ export default function QRDisplay({ url }: { url: string }) {
                     <span className="text-[10px] font-orbitron font-black text-primary uppercase tracking-[0.4em]">Initialize Connection</span>
                 </div>
                 <h2 className="text-4xl font-black font-orbitron text-glow-blue uppercase italic">Scan to join the game</h2>
-                <p className="font-mono text-primary/40 text-xs tracking-widest uppercase">{url}</p>
+                <div className="flex items-center justify-center gap-3 bg-black/40 border border-white/10 rounded-xl px-5 py-3 group hover:border-primary/50 transition-colors w-max mx-auto">
+                    <p className="font-mono text-primary/60 text-sm tracking-widest">{url}</p>
+                    <button
+                        onClick={handleCopy}
+                        className="text-white hover:text-primary transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg"
+                        title="Copy Link"
+                    >
+                        {copied ? <CheckCircle2 size={16} className="text-success" /> : <Copy size={16} />}
+                    </button>
+                </div>
             </div>
         </div>
     );

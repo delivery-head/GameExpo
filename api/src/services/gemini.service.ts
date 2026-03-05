@@ -46,10 +46,19 @@ export async function generateImageFromPrompt(prompt: string) {
         console.warn('Gemini image generation failed (likely Free Tier quota limit):', error.message);
         console.warn('Falling back to free public AI image generation (pollinations.ai)...');
 
-        // Return a dynamically generated AI image based on the prompt as a fallback
-        // Unsplash Source API returns random images about the topic
-        const keywords = encodeURIComponent(prompt.split(' ').slice(0, 3).join(','));
-        return `https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1080&auto=format&fit=crop`;
+        // Return a dynamically generated image based on the prompt as a fallback
+        // loremflickr.com provides relevant images based on keywords
+        // We filter out common stop words to get more meaningful keywords
+        const stopWords = new Set(['a', 'an', 'the', 'on', 'in', 'at', 'by', 'is', 'of', 'with', 'and', 'or', 'for']);
+        const keywords = encodeURIComponent(
+            prompt.toLowerCase()
+                .split(/\s+/)
+                .filter(w => w.length > 2 && !stopWords.has(w))
+                .slice(0, 4)
+                .join(',')
+        );
+        const seed = Math.floor(Math.random() * 1000000);
+        return `https://loremflickr.com/1024/1024/${keywords}?lock=${seed}`;
     }
 }
 

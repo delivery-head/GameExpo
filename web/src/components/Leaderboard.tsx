@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Player {
+    id: string;
     name: string;
     score: number | null;
 }
@@ -14,7 +15,7 @@ export default function Leaderboard({ players }: { players: Player[] }) {
         .sort((a, b) => (b.score || 0) - (a.score || 0));
 
     const top3 = rankedPlayers.slice(0, 3);
-    const others = rankedPlayers.slice(3, 10);
+    const others = rankedPlayers.slice(3);
 
     const getMedalColor = (idx: number) => {
         switch (idx) {
@@ -36,15 +37,15 @@ export default function Leaderboard({ players }: { players: Player[] }) {
 
     return (
         <div className="flex flex-col h-full bg-glass rounded-[32px] border border-white/10 p-6 relative overflow-hidden">
-            <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="flex items-center justify-center gap-3 mb-10 shrink-0">
                 <h2 className="text-xl font-black font-orbitron tracking-[0.2em] uppercase text-gold italic">Leaderboard</h2>
             </div>
 
-            <div className="space-y-3 mb-12">
+            <div className="space-y-3 mb-12 shrink-0">
                 <AnimatePresence>
                     {top3.map((player, idx) => (
                         <motion.div
-                            key={player.name}
+                            key={player.id}
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             layout
@@ -68,18 +69,18 @@ export default function Leaderboard({ players }: { players: Player[] }) {
                 </AnimatePresence>
             </div>
 
-            <div className="flex-1">
-                <div className="flex items-center gap-4 mb-6">
+            <div className="flex-1 flex flex-col min-h-0">
+                <div className="flex-shrink-0 flex items-center gap-4 mb-6">
                     <div className="h-px flex-1 bg-gradient-to-r from-transparent to-rose-500/50" />
                     <h3 className="text-[10px] font-orbitron font-black text-rose-500 uppercase tracking-[0.4em]">Live Scores</h3>
                     <div className="h-px flex-1 bg-gradient-to-l from-transparent to-rose-500/50" />
                 </div>
 
-                <div className="space-y-3">
+                <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
                     <AnimatePresence>
                         {others.map((player, idx) => (
                             <motion.div
-                                key={player.name}
+                                key={player.id}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 layout
@@ -95,6 +96,23 @@ export default function Leaderboard({ players }: { players: Player[] }) {
                     </AnimatePresence>
                 </div>
             </div>
+
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.02);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(0, 242, 255, 0.2);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(0, 242, 255, 0.4);
+                }
+            `}</style>
         </div>
     );
 }

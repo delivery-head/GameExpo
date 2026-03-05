@@ -3,20 +3,22 @@
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
 
-export default function PlayerImagePanel({ imageUrl, lastPlayerName }: { imageUrl: string | null, lastPlayerName: string | null }) {
+export default function PlayerImagePanel({ imageUrl, lastPlayerName, onLoad }: { imageUrl: string | null, lastPlayerName: string | null, onLoad?: () => void }) {
     return (
         <div className="w-full h-full relative group">
             <div className="w-full h-full bg-black/40 relative overflow-hidden flex flex-col items-center justify-center transition-all">
                 {imageUrl && imageUrl !== 'none' ? (
                     <motion.div
+                        key={imageUrl}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="w-full h-full relative"
                     >
                         <img
-                            src={imageUrl}
+                            src={`${imageUrl}${imageUrl.includes('?') ? '&' : '?'}v=${Date.now()}`}
                             className="w-full h-full object-cover"
                             alt="Player Generation"
+                            onLoad={onLoad}
                             onError={(e) => {
                                 // If the image fails to load, hide it and show placeholder
                                 e.currentTarget.style.display = 'none';

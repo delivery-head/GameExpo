@@ -8,9 +8,10 @@ export default function AIImagePanel({ imageUrl, description }: { imageUrl: stri
         <div className="w-full h-full relative group">
             {imageUrl ? (
                 <motion.img
+                    key={imageUrl}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    src={imageUrl}
+                    src={`${imageUrl}${imageUrl.includes('?') ? '&' : '?'}v=${Date.now()}`}
                     className="w-full h-full object-cover"
                     alt="AI Reference"
                 />
@@ -21,12 +22,6 @@ export default function AIImagePanel({ imageUrl, description }: { imageUrl: stri
             )}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
-
-            <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-[10px] font-orbitron text-primary/80 uppercase tracking-widest leading-relaxed line-clamp-2 max-w-[80%]">
-                    {description || "Initializing Neural Matrix..."}
-                </p>
-            </div>
         </div>
     );
 }
