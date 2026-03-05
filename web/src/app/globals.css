@@ -2,12 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;900&display=swap');
 
 :root {
-  --background: #020205;
+  --background: #050508;
   --foreground: #f0f0f5;
-  --primary: #00f2ff;
+  --primary: #00d2ff;
+  /* Electric Blue */
   --secondary: #7000ff;
-  --accent: #ff007a;
+  --accent: #ff6b00;
+  /* Neon Orange */
+  --gold: #ffcc00;
+  /* Gold */
   --success: #00ff9d;
+  --card: rgba(10, 10, 20, 0.7);
 }
 
 @theme inline {
@@ -16,6 +21,7 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
+  --color-gold: var(--gold);
   --color-success: var(--success);
   --font-orbitron: 'Orbitron', sans-serif;
   --font-inter: 'Inter', sans-serif;
@@ -26,67 +32,59 @@ body {
   color: var(--foreground);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.02) 0%, transparent 30%);
+  background-image:
+    radial-gradient(circle at 50% 10%, rgba(0, 210, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255, 107, 0, 0.03) 0%, transparent 40%);
 }
 
 @layer utilities {
-  .text-glow-cyan {
-    text-shadow: 0 0 10px rgba(0, 242, 255, 0.5), 0 0 20px rgba(0, 242, 255, 0.2);
-  }
-  
-  .text-glow-magenta {
-    text-shadow: 0 0 10px rgba(255, 0, 122, 0.5), 0 0 20px rgba(255, 0, 122, 0.2);
+  .text-glow-blue {
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5), 0 0 20px rgba(0, 210, 255, 0.2);
   }
 
-  .neon-border-cyan {
-    box-shadow: 0 0 5px rgba(0, 242, 255, 0.5), inset 0 0 5px rgba(0, 242, 255, 0.2);
-    border: 1px solid rgba(0, 242, 255, 0.3);
+  .text-glow-orange {
+    text-shadow: 0 0 10px rgba(255, 107, 0, 0.5), 0 0 20px rgba(255, 107, 0, 0.2);
   }
 
-  .neon-border-magenta {
-    box-shadow: 0 0 5px rgba(255, 0, 122, 0.5), inset 0 0 5px rgba(255, 0, 122, 0.2);
-    border: 1px solid rgba(255, 0, 122, 0.3);
+  .text-glow-gold {
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5), 0 0 20px rgba(255, 204, 0, 0.2);
+  }
+
+  .neon-border-blue {
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.3), inset 0 0 5px rgba(0, 210, 255, 0.1);
+    border: 1px solid rgba(0, 210, 255, 0.4);
+  }
+
+  .neon-border-orange {
+    box-shadow: 0 0 10px rgba(255, 107, 0, 0.3), inset 0 0 5px rgba(255, 107, 0, 0.1);
+    border: 1px solid rgba(255, 107, 0, 0.4);
   }
 
   .bg-glass {
-    background: rgba(10, 10, 20, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 10, 25, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   .scanline {
     width: 100%;
     height: 100px;
-    z-index: 100;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 242, 255, 0.03) 50%, rgba(0, 0, 0, 0) 100%);
+    z-index: 1;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 210, 255, 0.02) 50%, rgba(0, 0, 0, 0) 100%);
     opacity: 0.1;
     position: absolute;
     bottom: 100%;
     animation: scanline 8s linear infinite;
+    pointer-events: none;
   }
 }
 
 @keyframes scanline {
-  0% { bottom: 100%; }
-  100% { bottom: -100px; }
-}
+  0% {
+    bottom: 100%;
+  }
 
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
-
-.animate-glitch {
-  animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-  animation-play-state: paused;
-}
-
-.animate-glitch:hover {
-  animation-play-state: running;
+  100% {
+    bottom: -100px;
+  }
 }
