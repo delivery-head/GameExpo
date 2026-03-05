@@ -50,7 +50,7 @@ export async function updateEventStatus(id: string, status: 'waiting' | 'active'
     return res.json();
 }
 
-export async function submitPrompt(id: string, email: string, prompt: string) {
+export async function submitPrompt(id: string, email: string | undefined, prompt: string) {
     const res = await fetch(`${API_URL}/events/${id}/submit`, {
         method: 'POST',
         headers: {

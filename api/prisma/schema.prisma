@@ -14,6 +14,9 @@ model Event {
   maxPlayers         Int
   referenceImageUrl  String?
   referenceEmbedding Json?
+  referencePrompt    String?
+  aiWins             Int      @default(0)
+  humanWins          Int      @default(0)
   createdAt          DateTime @default(now())
   players            Player[]
 }

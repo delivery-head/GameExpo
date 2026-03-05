@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { PrismaClient } from '@prisma/client';
-import { generateImage, getEmbedding, cosineSimilarity } from '../services/ai.js';
+import { generateImageFromPrompt, getPromptSimilarity } from '../services/gemini.service.js';
 
 const prisma = new PrismaClient();
 
@@ -96,17 +96,21 @@ export default async function eventRoutes(fastify: FastifyInstance, options: Fas
 
             // If first player, generate AI ref
             if (event.status === 'waiting') {
-                const referencePrompt = "A futuristic cyberpunk city with neon lights and flying cars, digital art style";
-                const imageUrl = await generateImage(referencePrompt);
-                const embedding = await getEmbedding(referencePrompt);
+                const prompts = [
+                    "A futuristic warrior fighting a dragon in a burning city",
+                    "A neon cyberpunk samurai standing on a skyscraper",
+                    "A wizard casting lightning in a medieval battlefield"
+                ];
+                const referencePrompt = prompts[Math.floor(Math.random() * prompts.length)] as string;
+                const imageUrl = await generateImageFromPrompt(referencePrompt);
 
                 await prisma.event.update({
                     where: { id },
                     data: {
                         status: 'active',
                         referenceImageUrl: imageUrl,
-                        referenceEmbedding: embedding as any
-                    }
+                        referencePrompt: referencePrompt
+                    } as any
                 });
 
                 broadcast({ type: 'EVENT_ACTIVE', eventId: id, imageUrl });
@@ -119,7 +123,7 @@ export default async function eventRoutes(fastify: FastifyInstance, options: Fas
     );
 
     // POST /events/:id/submit
-    fastify.post<{ Params: { id: string }; Body: { email: string; prompt: string } }>(
+    fastify.post<{ Params: { id: string }; Body: { email?: string; prompt: string } }>(
         '/events/:id/submit',
         async (request, reply) => {
             const { id } = request.params;
@@ -133,21 +137,28 @@ export default async function eventRoutes(fastify: FastifyInstance, options: Fas
                 return reply.status(400).send({ error: 'Game not active' });
             }
 
-            const player = await prisma.player.findFirst({
-                where: { eventId: id, email }
-            });
+            let player;
+            if (email) {
+                player = await prisma.player.findFirst({
+                    where: { eventId: id, email }
+                });
+            } else {
+                // Pick the oldest player who hasn't submitted yet
+                player = await prisma.player.findFirst({
+                    where: { eventId: id, score: null },
+                    orderBy: { createdAt: 'asc' }
+                });
+            }
 
-            if (!player) return reply.status(404).send({ error: 'Not registered' });
+            if (!player) return reply.status(404).send({ error: 'No active player found' });
             if (player.score !== null) return reply.status(400).send({ error: 'Already submitted' });
 
-            // Generate user AI image & embedding
-            const userImageUrl = await generateImage(prompt);
-            const userEmbedding = await getEmbedding(prompt);
+            // Generate user AI image
+            const userImageUrl = await generateImageFromPrompt(prompt);
 
-            // Compare
-            const refEmbedding = event.referenceEmbedding as number[];
-            const similarity = cosineSimilarity(refEmbedding, userEmbedding as number[]);
-            const score = Math.round(similarity * 100);
+            // Compare similarity
+            const scoreRaw = await getPromptSimilarity((event as any).referencePrompt || "", prompt);
+            const score = Math.round(scoreRaw * 100);
 
             const updatedPlayer = await prisma.player.update({
                 where: { id: player.id },
@@ -156,6 +167,19 @@ export default async function eventRoutes(fastify: FastifyInstance, options: Fas
                     generatedImageUrl: userImageUrl,
                     score
                 }
+            });
+
+            // Update event wins
+            const updateData: any = {};
+            if (score >= 80) {
+                updateData.humanWins = { increment: 1 };
+            } else {
+                updateData.aiWins = { increment: 1 };
+            }
+
+            await prisma.event.update({
+                where: { id },
+                data: updateData
             });
 
             broadcast({ type: 'SCORE_UPDATE', eventId: id, player: { name: player.name, score } });
