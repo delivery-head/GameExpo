@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { joinEvent, getEvent, submitPrompt } from '@/lib/api';
+import { joinEvent, getEvent, submitPrompt, WS_URL } from '@/lib/api';
 
 export default function PlayPage() {
     const { eventId } = useParams() as { eventId: string };
@@ -30,7 +30,7 @@ export default function PlayPage() {
         if (status === 'joining') return;
 
         // WebSocket for real-time status updates
-        const socket = new WebSocket('ws://localhost:4000/ws');
+        const socket = new WebSocket(WS_URL);
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);

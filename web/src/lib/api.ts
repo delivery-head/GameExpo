@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:4000';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+export const WS_URL = API_URL.replace(/^http/, 'ws') + '/ws';
 
 export async function createEvent(name: string, maxPlayers: number) {
     const res = await fetch(`${API_URL}/events`, {

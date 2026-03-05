@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { getEvent } from '@/lib/api';
+import { getEvent, WS_URL } from '@/lib/api';
 import { QRCodeSVG } from 'qrcode.react';
 
 export default function ScreenPage() {
@@ -25,7 +25,7 @@ export default function ScreenPage() {
         fetchData();
 
         // WebSocket for real-time updates
-        const socket = new WebSocket('ws://localhost:4000/ws');
+        const socket = new WebSocket(WS_URL);
 
         socket.onmessage = (msg) => {
             const data = JSON.parse(msg.data);
@@ -67,7 +67,8 @@ export default function ScreenPage() {
         </div>
     );
 
-    const playUrl = `http://localhost:3000/play/${eventId}`;
+    // Use window.location.origin for dynamically generated play URLs
+    const playUrl = typeof window !== 'undefined' ? `${window.location.origin}/play/${eventId}` : `http://localhost:3000/play/${eventId}`;
 
     return (
         <div className="flex flex-col min-h-screen bg-rose-950 text-white p-12">
