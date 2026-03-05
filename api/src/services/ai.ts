@@ -10,8 +10,12 @@ const openai = new OpenAI({
 
 export async function generateImage(prompt: string) {
     // If no real API key, return a mock URL
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_key_here') {
-        console.warn('OPENAI_API_KEY is not set. Returning mock image.');
+    const isPlaceholder = !process.env.OPENAI_API_KEY ||
+        process.env.OPENAI_API_KEY === 'your_key_here' ||
+        process.env.OPENAI_API_KEY.includes('actual-api-key');
+
+    if (isPlaceholder) {
+        console.warn('OPENAI_API_KEY is a placeholder or not set. Returning mock image.');
         return 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
     }
 
@@ -32,8 +36,12 @@ export async function generateImage(prompt: string) {
 }
 
 export async function getEmbedding(text: string) {
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_key_here') {
-        console.warn('OPENAI_API_KEY is not set. Returning mock embedding.');
+    const isPlaceholder = !process.env.OPENAI_API_KEY ||
+        process.env.OPENAI_API_KEY === 'your_key_here' ||
+        process.env.OPENAI_API_KEY.includes('actual-api-key');
+
+    if (isPlaceholder) {
+        console.warn('OPENAI_API_KEY is a placeholder or not set. Returning mock embedding.');
         return new Array(3072).fill(0).map(() => Math.random());
     }
 
