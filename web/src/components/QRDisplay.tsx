@@ -48,7 +48,7 @@ export default function QRDisplay({ url }: { url: string }) {
                     <span className="text-[10px] font-orbitron font-black text-primary uppercase tracking-[0.4em]">Initialize Connection</span>
                 </div>
                 <h2 className="text-4xl font-black font-orbitron text-glow-blue uppercase italic">Scan to join the game</h2>
-                <div className="flex items-center justify-center gap-3 bg-black/40 border border-white/10 rounded-xl px-5 py-3 group hover:border-primary/50 transition-colors w-max mx-auto">
+                {/* <div className="flex items-center justify-center gap-3 bg-black/40 border border-white/10 rounded-xl px-5 py-3 group hover:border-primary/50 transition-colors w-max mx-auto">
                     <p className="font-mono text-primary/60 text-sm tracking-widest">{url}</p>
                     <button
                         onClick={handleCopy}
@@ -57,7 +57,7 @@ export default function QRDisplay({ url }: { url: string }) {
                     >
                         {copied ? <CheckCircle2 size={16} className="text-success" /> : <Copy size={16} />}
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );
